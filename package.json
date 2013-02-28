@@ -1,0 +1,13 @@
+{
+  "name": "frontend",
+  "description": "sharedtapes frontend",
+  "version": "0.0.1",
+  "author": "Drew Harris",
+  "dependencies": {
+    "express": "3.0.5",
+    "when": "1.5.1"
+  },
+  "scripts": {
+    "start": "node index.js"
+  }
+}
