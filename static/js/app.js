@@ -137,11 +137,11 @@
 		window.searchView.on('playing', function(){
 			window.player.showPlay();
 		});
-		// this has to happen to re-set the sortable on the 
-		// mixtape song list after re-attaching the element
-		window.searchView.on('open', function(){
-			window.mixtapeView.setSortable();
-		});
+		// // this has to happen to re-set the sortable on the 
+		// // mixtape song list after re-attaching the element
+		// window.searchView.on('open', function(){
+		// 	window.mixtapeView.setSortable();
+		// });
 
 		// MixtapeView events
 		window.mixtapeView.on('set-title', function(newTitle){
@@ -217,9 +217,10 @@
 			// do something...
 			console.log('new data...');
 			var mixtape = new Mixtape(data);
-			mixtape.set('songs', new SongCollection(mixtape.get('songs')));
-			window.mixtapeView.mixtape = mixtape;
-			window.mixtapeView.render();
+			// mixtape.set('songs', new SongCollection(mixtape.get('songs')));
+			mixtape.reset(mixtape);
+			// window.mixtapeView.mixtape = mixtape;
+			// window.mixtapeView.render();
 		});
 		window.socket.on('listeners', function(listeners){
 			if (listeners === 1){
@@ -238,7 +239,7 @@
 			console.log('publishing data');
 			window.socket.emit('publish', JSON.stringify(mixtapeData));
 		});
-	}
+	};
 
 	// view manager @todo
 	// this is the makeshift view manager until i get organized

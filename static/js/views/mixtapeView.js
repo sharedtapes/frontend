@@ -53,7 +53,6 @@ var MixtapeView = Backbone.View.extend({
             this.mixtape.get('songs').on('change', function(model){
                 this.render();
             }.bind(this));
-            
             // Set up to retrieve realtime updates (via websocket)
             this.trigger('subscribe', {
                 'id': this.mixtape.id
@@ -66,7 +65,7 @@ var MixtapeView = Backbone.View.extend({
             if (this.mixtape.get('songs').length){
                 this.currentSongId = this.mixtape.get('songs').at(this.currentSong).get('id');
             }
-            
+
             this.render();
 
         }.bind(this), function(){
@@ -391,20 +390,8 @@ var MixtapeView = Backbone.View.extend({
         this.trigger('searchRecommendation', $(event.target).text());
     },
     generateRecommendations: function(){
-        var similarArtists = [],
-            uniqueSongs = {},
-            frequency = {},
-            value,
-            uniques = [];
-
-        this.mixtape.get('songs').map(function(song){
-            if (!uniqueSongs.hasOwnProperty(song.get('artist'))){
-                uniqueSongs[song.get('artist')] = song.get('similar_artists');  
-                similarArtists = similarArtists.concat(song.get('similar_artists'));
-            }
-        });
-
-        similarArtists.sort(function(){ 
+        var similarArtists = this.mixtape.get('similarArtists');
+        similarArtists.sort(function(){
             return 0.5 - Math.random();
         });
 
