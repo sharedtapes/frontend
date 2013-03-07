@@ -391,11 +391,12 @@ var MixtapeView = Backbone.View.extend({
     },
     generateRecommendations: function(){
         var similarArtists = this.mixtape.get('similarArtists');
-        similarArtists.sort(function(){
-            return 0.5 - Math.random();
-        });
+        if (similarArtists !== undefined){
+            similarArtists.sort(function(){
+                return 0.5 - Math.random();
+            });
 
-        this.trigger('recommendations', similarArtists);
-
+            this.trigger('recommendations', similarArtists);
+        }
     }
 });
