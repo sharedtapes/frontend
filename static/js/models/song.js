@@ -2,6 +2,7 @@
 var Song = Backbone.Model.extend({
 	title: null,
 	artist: null,
+	album: null,
 	id: null,
 	url: null
-});	
+});

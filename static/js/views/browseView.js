@@ -35,8 +35,8 @@ var BrowseView = Backbone.View.extend({
 		$("#recently-added-list").empty();
 		var htmlString = '';
 		data.map(function(item){
-			htmlString += '<span class="fake-link recently-added-item" id="mixtape:' + item.id + '">' +
-				item.title + '</span> (' + item.id + ')<br/>';
+			htmlString += '<span class="fake-link recently-added-item" id="mixtape:' + item.mixtape_id + '">' +
+				item.title + '</span> (' + item.mixtape_id + ')<br/>';
 		});
 		$("#recently-added-list").append(htmlString);
 	},
