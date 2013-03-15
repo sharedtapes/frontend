@@ -399,12 +399,17 @@
 		},
 		mixtape: function(id){
 			// Define the Backbone views
+			console.log(id);
 			if (window.mixtapeView === undefined){
 				window.mixtapeView = new MixtapeView({
 					'id': id
 				});
 			}
 			$("#status-text").text('you can edit');
+
+			// this seems to be necessary to strip out the
+			// # if you navigate to, say, /c#browse
+			this.navigate('');
 			this.navigate(id);
 			app.changeContentView('search');
 			app.bootstrap();
