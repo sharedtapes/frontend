@@ -398,6 +398,7 @@
 			this.navigate('browse');
 		},
 		mixtape: function(id){
+			console.log(this);
 			// Define the Backbone views
 			console.log(id);
 			if (window.mixtapeView === undefined){
@@ -409,7 +410,9 @@
 
 			// this seems to be necessary to strip out the
 			// # if you navigate to, say, /c#browse
-			this.navigate('');
+			if (window.location.hash.length){
+				this.navigate('');
+			}
 			this.navigate(id);
 			app.changeContentView('search');
 			app.bootstrap();
