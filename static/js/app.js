@@ -308,16 +308,26 @@
 		// the header navigation stuff
 		$("#click-help").click(function(){
 			app.changeContentView('help');
-			window.router.navigate('help');
+			if (window.mixtapeView.mixtape.id !== undefined){
+				window.router.navigate(window.mixtapeView.mixtape.id +'#help');
+			}
+			else {
+				window.router.navigate('/#help');
+			}
 		});
 		$("#click-browse").click(function(){
 			app.changeContentView('browse');
-			window.router.navigate('browse');
+			if (window.mixtapeView.mixtape.id !== undefined){
+				window.router.navigate(window.mixtapeView.mixtape.id +'#browse');
+			}
+			else {
+				window.router.navigate('/#browse');
+			}
 		});
 		$("#click-search").click(function(){
 			app.changeContentView('search');
-			if (window.mixtapeView.id !== undefined){
-				window.router.navigate(window.mixtapeView.id);
+			if (window.mixtapeView.mixtape.id !== undefined){
+				window.router.navigate(window.mixtapeView.mixtape.id);
 			}
 			else {
 				window.router.navigate('');
