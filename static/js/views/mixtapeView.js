@@ -1,3 +1,8 @@
+
+// @todo: remove all of the direct DOM manipulation from this.
+// the view should publish events, and an abstraction layer should do
+// the DOM manipulation based on the events.
+
 // The Mixtape view, for holding and playing the current mixtape
 // and adding stuff to it
 var MixtapeView = Backbone.View.extend({
@@ -13,6 +18,9 @@ var MixtapeView = Backbone.View.extend({
         else {
             this.bootstrapNewMixtape();
         }
+
+        // This bootstrapping stuff is flawed, it should be unified and rewritten.
+        // Some events don't always happen that should.
     },
     // These bootstrap functions are messy and should be rewritten.
     bootstrapNewMixtape: function(){
@@ -20,10 +28,18 @@ var MixtapeView = Backbone.View.extend({
             'songs': new SongCollection(null)
         });
 
+        // This shouldn't be necessary, but sometimes it seems to be.
+        // @todo: fix the double-render glitch
+
+        // Also, any render changes should be done in a DocumentFragement
+        // and THEN attached to the DOM, as right now the update is
+        // pretty glitchy and slow.
         this.mixtape.get('songs').on('change', function(model){
             this.render();
         }.bind(this));
 
+        // Replace this (and other .triggers) with Marionette's
+        // pub/sub event handler
         this.trigger('set-title', 'untitled mixtape');
 
         this.setSortable();
@@ -50,6 +66,7 @@ var MixtapeView = Backbone.View.extend({
         this.mixtape.fetch().then(function(){
             console.log('fetch succeeded');
             // make sure these events are set up
+            // @todo: check that there aren't already event handlers set for these
             this.mixtape.get('songs').on('change', function(model){
                 this.render();
             }.bind(this));
@@ -86,8 +103,9 @@ var MixtapeView = Backbone.View.extend({
         this.trigger('set-title', this.mixtape.get('title'));
 
         // Add in the public share link
+        // @todo: template this instead of raw HTML
         if(this.mixtape.id !== undefined){
-            $("#public-link").html('edit link: <a href="/' + 
+            $("#public-link").html('edit link: <a href="/' +
                 this.mixtape.id + '">sharedtapes.com/' + this.mixtape.id + '</a>');
         }
         else{
@@ -96,6 +114,7 @@ var MixtapeView = Backbone.View.extend({
         }
 
         // Clear and redraw the songs list.
+        // @todo: do this in a DocumentFragment and then attach.
         $("#songs-list").empty();
         for (var i = 0; i < this.mixtape.get('songs').length; i++){
             this.addSongToList(i, this.mixtape.get('songs').at(i));
@@ -221,9 +240,9 @@ var MixtapeView = Backbone.View.extend({
             this.load();
             this.play();
             $(event.target).attr('src', '/static/images/search/pause_25.png');
-            
+
         }
-        
+
     },
     stop: function(){
         $(".playing").removeClass("playing");
@@ -272,7 +291,7 @@ var MixtapeView = Backbone.View.extend({
             if (this.playing && !this.paused){
                 $("#play-" + this.currentSongId).attr('src', '/static/images/search/pause_25.png');
                 this.play();
-            };
+            }
             this.emitAvailable();
         }
     },
@@ -290,7 +309,7 @@ var MixtapeView = Backbone.View.extend({
             if (this.playing && !this.paused){
                 $("#play-" + this.currentSongId).attr('src', '/static/images/search/pause_25.png');
                 this.play();
-            };
+            }
             this.emitAvailable();
         }
     },
@@ -360,6 +379,7 @@ var MixtapeView = Backbone.View.extend({
         this.create();
     },
     setSortable: function(){
+        // @todo: this doesn't happen sometimes... do some testing and figure out why
         $("#songs-list").sortable({
             update: function(){
                 var children = $("#songs-list").children(),

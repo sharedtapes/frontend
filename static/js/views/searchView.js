@@ -1,12 +1,14 @@
+
+// @todo: remove all of the direct DOM manipulation from this.
+// the view should publish events, and an abstraction layer should do
+// the DOM manipulation based on the events.
+
 // The Search view for getting new songs
 var SearchView = Backbone.View.extend({
     el: $("#search"),
     setupTemplate: _.template($("#search-setup-template").html()),
     resultTemplate: _.template($("#search-result-template").html()),
     initialize: function(){
-        // bootstrap css
-        // $("#content").append('<div id="search"></div>');
-        // this.el = $("#search");
 
         var html = this.setupTemplate();
         this.$el.append(html);
@@ -27,6 +29,9 @@ var SearchView = Backbone.View.extend({
                 $("#execute-search").click();
             }
         });
+
+        // this is for the spinning "searching" animation
+        // @todo: these probably don't all have to be assignmend to this...
         this.canvas = $("#search-loading-canvas")[0];
         this.context = this.canvas.getContext('2d');
         this.loadingImage = new Image();
@@ -106,6 +111,10 @@ var SearchView = Backbone.View.extend({
         }
     },
     searchMore: function(){
+        // @todo paginate results, rather than having a massive list down
+        // the whole page
+        // also, when you click the "Search more" button on the bottom of the page,
+        // there's no UI change to indicate that anything's happening.  Fix that
         this.resultsStart += 20;
         this.startLoading();
         $.when(exfm.search($("#query").val(), this.resultsStart)).then(function(data){

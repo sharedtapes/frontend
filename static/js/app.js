@@ -2,7 +2,10 @@
 
     // This must be executed after models/, collections/ and views/ have been loaded.
 
-    // The next step would be to modularize with require.js and AMD.
+    // @todo: modularize with require.js and AMD.
+
+
+    // @todo: use Marionette, replace 'app' with Marionette.app
 
     var app = {};
 
@@ -12,10 +15,11 @@
     //
 
 
-    // Setup the HTML5+flash audio solution
+    // Setup the HTML5+flash audio player
     window.audioPlayer = new AudioPlayer();
 
     // Setup the music player view
+    // @todo: rename this
     window.player = new PlayerView();
 
     // This is where the bootstrapping/publish/subscribe/event assignment happens.
@@ -24,11 +28,18 @@
     // Some things have to happen on root access, other things have to happen only
     // on hitting a specific mixtape.  Working on it.
 
+    // @todo: replace this all with Marionette's event handler abstraction layer,
+    // so that views can just publish/subscribe data to each other
+
     app.bootstrap = function(){
         app.bootstrapPlayer();
         app.bootstrapMixtape();
         app.boostrapRealtime();
     };
+
+    // @todo: remove the window. from all of these, it was for testing.
+    // assign them to the app object instead (once the Marionette transition
+    // is complete)
 
     app.bootstrapPlayer = function(){
         window.audioPlayer.on('updateCurrentTime', function(time){
@@ -64,7 +75,6 @@
         window.searchView.on('addSong', function(opts){
             window.mixtapeView.addSong(window.searchView.songs.get(opts.id));
         });
-        
         window.searchView.on('playPreview', function(data){
 
             var song = window.searchView.songs.get(data.id);
@@ -88,7 +98,7 @@
                 window.mixtapeView.paused = false;
                 window.mixtapeView.playing = false;
             }
-            
+
             // if we're currently previewing another song, stop it and update the UI.
             if (window.searchView.previewPlaying){
                 $("#preview-play-" + window.searchView.nowPlaying).attr('src', '/static/images/search/play_25.png');
@@ -115,7 +125,7 @@
 
                 $("#preview-play-" + data.id).attr('src', '/static/images/search/pause_25.png');
             }
-            
+
         });
         window.searchView.on('pausePreview', function(data){
             window.audioPlayer.stop();
@@ -137,11 +147,6 @@
         window.searchView.on('playing', function(){
             window.player.showPlay();
         });
-        // // this has to happen to re-set the sortable on the 
-        // // mixtape song list after re-attaching the element
-        // window.searchView.on('open', function(){
-        //  window.mixtapeView.setSortable();
-        // });
 
         // MixtapeView events
         window.mixtapeView.on('set-title', function(newTitle){
@@ -200,7 +205,7 @@
 
         // set up the editable title
         // @todo: this doesn't style the form field
-        $('#title-text').editable(function(value, settings) { 
+        $('#title-text').editable(function(value, settings) {
             window.mixtapeView.setTitle(value);
             return(value);
         }, {
@@ -208,18 +213,21 @@
         });
     };
 
+    // Set up to listen for and send WebSocket messages
+    // This makes the app collaborative, with all of the changes
+    // made proliterating in real-time between clients viewing a mixtape
     app.boostrapRealtime = function(){
-        // socket.io realtime updating
         window.socket = io.connect('ws://' + document.domain);
         window.socket.on('data', function(data){
             // put in a check here on currently playing songs
             // in case it has been removed...
             // do something...
+            // @todo: handle this case
             console.log('new data...');
             var mixtape = new Mixtape(data);
             mixtape.set('songs', new SongCollection(mixtape.get('songs')));
-            // mixtape.reset(mixtape);
             window.mixtapeView.mixtape = mixtape;
+            // @todo: this renders twice, and it shouldn't.
             window.mixtapeView.render();
         });
         window.socket.on('listeners', function(listeners){
@@ -243,7 +251,7 @@
 
     // view manager @todo
     // this is the makeshift view manager until i get organized
-    // and use marionette or write something nice
+    // and use Marionette
     app.changeContentView = function(view, options){
         if (view === 'search'){
             if (window.helpView !== undefined){
@@ -252,9 +260,6 @@
             if (window.browseView !== undefined){
                 window.browseView.close();
             }
-            // if (window.searchView !== undefined){
-            //  window.searchView.empty();
-            // }
             if (window.searchView === undefined) {
                 window.searchView = new SearchView();
             }
@@ -300,10 +305,12 @@
             window.browseView.render();
             $("#content-title").text('browse');
         }
-    }
+    };
 
-    
+
     // stuff that happens last, set up the front end click events
+    // again, this is not code I'm proud of, it'll all be a lot cleaner
+    // with Marionette
     app.done = function(){
         // the header navigation stuff
         $("#click-help").click(function(){
@@ -332,7 +339,7 @@
             else {
                 window.router.navigate('');
             }
-            
+
         });
         // @todo: make this AJAXy
         $("#click-new").click(function(){
@@ -341,9 +348,13 @@
 
 
         $("#wrapper").show();
-    }
+    };
 
-    // @todo fix the routing
+    // @todo fix the routing, as it's a little hacky right now
+    // and doesn't seem to work in Internet Explorer (at all).
+    // I'd like to be using just the History API, but it's not very backwards
+    // compatible.  Falling back to hashes doesn't appear to be working right now,
+    // so... I should fix that.
     var Router = Backbone.Router.extend({
         routes: {
             '': 'root',
@@ -354,6 +365,8 @@
         root: function(){
             // Define the Backbone views
             console.log('root');
+            // Again, the window should be replaced with app,
+            // or something different all together.
             window.mixtapeView = new MixtapeView();
             window.mixtapeView.render();
             app.changeContentView('search');
@@ -361,7 +374,6 @@
             app.bootstrapControls();
             this.navigate('');
             $("#status-text").text('add some songs');
-            // // Set up any extra Router events
             window.mixtapeView.on('save_new', function(data){
                 console.log('navigating');
                 this.navigate(data.id);
@@ -409,7 +421,7 @@
             $("#status-text").text('you can edit');
 
             // this seems to be necessary to strip out the
-            // # if you navigate to, say, /c#browse
+            // # if you navigate to, say, /c3po#browse
             if (window.location.hash.length){
                 this.navigate('');
             }
