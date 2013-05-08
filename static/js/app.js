@@ -313,7 +313,10 @@
     // with Marionette
     app.done = function(){
         // the header navigation stuff
-        $("#click-help").click(function(){
+        $("#click-help").click(function(e){
+            e.preventDefault();
+            $(".nav-item").removeClass("active");
+            $(e.target).parent().addClass("active");
             app.changeContentView('help');
             if (window.mixtapeView.mixtape.id !== undefined){
                 window.router.navigate(window.mixtapeView.mixtape.id +'#help');
@@ -322,7 +325,10 @@
                 window.router.navigate('/#help');
             }
         });
-        $("#click-browse").click(function(){
+        $("#click-browse").click(function(e){
+            e.preventDefault();
+            $(".nav-item").removeClass("active");
+            $(e.target).parent().addClass("active");
             app.changeContentView('browse');
             if (window.mixtapeView.mixtape.id !== undefined){
                 window.router.navigate(window.mixtapeView.mixtape.id +'#browse');
@@ -331,7 +337,10 @@
                 window.router.navigate('/#browse');
             }
         });
-        $("#click-search").click(function(){
+        $("#click-search").click(function(e){
+            e.preventDefault();
+            $(".nav-item").removeClass("active");
+            $(e.target).parent().addClass("active");
             app.changeContentView('search');
             if (window.mixtapeView.mixtape.id !== undefined){
                 window.router.navigate(window.mixtapeView.mixtape.id);

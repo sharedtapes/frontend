@@ -3,7 +3,8 @@
 <html>
 <head>
     <title>sharedtapes</title>
-    <link rel="stylesheet" type="text/css" href="static/css/style.css" />
+    <link href="/static/css/bootstrap.min.css"  type="text/css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/static/css/style.css" />
 </head>
 <body>
     <div id="wrapper">
@@ -12,9 +13,9 @@
                 <div id="title-text">
                     untitled
                 </div>
-                <div id="brand-title">
+                <!-- <div id="brand-title">
                     sharedtapes <div class="super">alpha</div>
-                </div>
+                </div> -->
             </div>
             <div id="header-info">
                 <div id="metadata">
@@ -35,20 +36,38 @@
             </div>
         </div>
 
-        <div id="header-bar">
-            <div id="click-new" class="header-bar-item">
+        <!-- <ul class="header-bar">
+            <li id="click-new" class="header-bar-item">
                 new
-            </div>
-            <div id="click-search" class="header-bar-item">
+            </li>
+            <li id="click-search" class="header-bar-item">
                 add songs
-            </div>
-            <div id="click-browse" class="header-bar-item">
+            </li>
+            <li id="click-browse" class="header-bar-item">
                 browse
-            </div>
-            <div id="click-help" class="header-bar-item">
+            </li>
+            <li id="click-help" class="header-bar-item">
                 help
-            </div>
+            </li>
+        </ul> -->
+        <div class="progress" style="border-radius:0; box-shadow: none; margin-bottom: 0;">
+            <div class="bar" style="width: 60%; border-radius:0; box-shadow: none;"></div>
         </div>
+        <div class="navbar" style="margin-bottom: 0; box-shadow: none;">
+          <div class="navbar-inner" style="padding-left:0; padding-right: 0; border-radius:0; box-shadow: none; margin-bottom: 0;">
+            <ul class="nav">
+              <li class="nav-item"><a href="/">new</a></li>
+              <li class="nav-item active"><a id="click-search" href="#">add songs</a></li>
+              <li class="nav-item"><a id="click-browse" href="#">browse</a></li>
+              <li class="nav-item"><a id="click-help" href="#">help</a></li>
+            </ul>
+            <ul class="nav pull-right">
+                <li><span class="brand">sharedtapes</span></li>
+            </ul>
+
+          </div>
+        </div>
+
 
         <div id="mixtape">
         </div>
@@ -245,5 +264,6 @@
     <script src="/static/js/views/helpView.js"></script>
     <script src="/static/js/views/browseView.js"></script>
     <script src="/static/js/app.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
 </body>
 </html>
