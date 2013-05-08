@@ -8,49 +8,39 @@
 </head>
 <body>
     <div id="wrapper">
-        <div id="header">
+        <!-- <div id="header">
             <div id="title">
                 <div id="title-text">
                     untitled
                 </div>
-                <!-- <div id="brand-title">
+                <div id="brand-title">
                     sharedtapes <div class="super">alpha</div>
-                </div> -->
+                </div>
             </div>
             <div id="header-info">
                 <div id="metadata">
                     <div id="status-text">add some songs</div>
-                    <!-- <div id="title"><span id="titleText"></span></div> -->
-                    
-                    <!-- <div id="author">by 
-                        <div id="author-text">
-                        </div>
-                    </div> -->
+ 
                     <div id="public-link"></div>
                     <div id="listeners"></div>
-                    <!-- <button id="clickNew">new</button>
-                    <button id="clickHelp">help</button> -->
                 </div>
                 <div id="controls">
                 </div>
             </div>
+        </div> -->
+        <div class="header">
+            <div class="row-fluid">
+                <div class="span8">
+                    <div class="lead" id="title-text" style="padding: 10px">untitled</div>
+                </div>
+                <div class="span4">
+                    controls
+                </div>
+            </div>
+            
         </div>
 
-        <!-- <ul class="header-bar">
-            <li id="click-new" class="header-bar-item">
-                new
-            </li>
-            <li id="click-search" class="header-bar-item">
-                add songs
-            </li>
-            <li id="click-browse" class="header-bar-item">
-                browse
-            </li>
-            <li id="click-help" class="header-bar-item">
-                help
-            </li>
-        </ul> -->
-        <div class="progress" style="border-radius:0; box-shadow: none; margin-bottom: 0;">
+        <div id="progress-bar" class="progress" style="border-radius:0; box-shadow: none; margin-bottom: 0; border-right:1px solid #d4d4d4; border-left: 1px solid #d4d4d4;">
             <div class="bar" style="width: 60%; border-radius:0; box-shadow: none;"></div>
         </div>
         <div class="navbar" style="margin-bottom: 0; box-shadow: none;">
@@ -233,16 +223,17 @@
     </script>
     <script type="text/template" id="mixtape-song-template">
         <div class="mixtape-song" id="song-<%= id %>">
-        <div class="mixtape-song-play"> 
-            <img width=20 src="/static/images/search/<%= imgSrc %>" id="play-<%= id %>" class="play-song" />
-        </div> 
-        <div class="mixtape-song-metadata">
-            <span><%= number %>. </span>
-            <span class="fake-link-black search-artist"><%= artist %></span> -
-            <%= title %>
-        </div>
-        <div class="mixtape-song-links">
-            <span class="remove-song fake-link-black">x</span></div>
+            <div class="mixtape-song-play"> 
+                <img width=20 src="/static/images/search/<%= imgSrc %>" id="play-<%= id %>" class="play-song" />
+            </div> 
+            <div class="mixtape-song-metadata">
+                <span><%= number %>. </span>
+                <span class="fake-link-black search-artist"><%= artist %></span> -
+                <%= title %>
+            </div>
+            <div class="mixtape-song-links">
+                <span class="remove-song fake-link-black">x</span>
+            </div>
         </div>
     </script>
     <script src="/static/js/jquery.js"></script>
