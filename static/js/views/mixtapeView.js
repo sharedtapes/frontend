@@ -2,6 +2,7 @@ var MixtapeView = Backbone.Marionette.CompositeView.extend({
     itemView: MixtapeSongView,
     itemViewContainer: "tbody",
     containerSelector: "mixtape-table",
+    itemSelector: "mixtape-song",
     template: "#mixtape-template",
     initialize: function(){
         // Fetch the mixtape information from the server
@@ -32,6 +33,13 @@ var MixtapeView = Backbone.Marionette.CompositeView.extend({
         this.options.vent.on('controls:next', function(){
             // do something
         });
+
+        // Listen for full mixtape updates from other views
+        this.options.vent.on('websocket:update', function(modelUpdate){
+            this.save({
+                model: modelUpdate
+            });
+        });
     },
     setSortable: function(){
         $("#" + this.containerSelector).sortable({
@@ -48,12 +56,24 @@ var MixtapeView = Backbone.Marionette.CompositeView.extend({
                     song = this.collection.get(id);
                     updateSongs.push(song);
                 }.bind(this));
-                newCollection = new SongCollection(updateSongs);
-                this.collection = newCollection;
-                this.model.set('songs', this.collection);
-                this.model.save();
+                this.save({
+                    collection: new SongCollection(updateSongs)
+                });
             }.bind(this)
         });
+    },
+    save: function(opts){
+        if (opts !== undefined){
+            if (opts.model !== undefined){
+                this.model = opts.model;
+                this.collection = this.model.get('songs');
+            }
+            if (opts.collection !== undefined){
+                this.model.set('songs', opts.collection);
+                this.collection = opts.collection;
+            }
+        }
+        this.model.save();
     }
 });
 // // @todo: remove all of the direct DOM manipulation from this.
