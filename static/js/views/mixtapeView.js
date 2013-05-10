@@ -34,7 +34,7 @@ var MixtapeView = Backbone.Marionette.CompositeView.extend({
             // do something
         });
 
-        // Listen for full mixtape updates from other views
+        // Listen for full mixtape updates from other viewers
         this.options.vent.on('websocket:update', function(modelUpdate){
             this.save({
                 model: modelUpdate
@@ -74,6 +74,9 @@ var MixtapeView = Backbone.Marionette.CompositeView.extend({
             }
         }
         this.model.save();
+        this.options.vent.trigger('mixtape:titleUpdate', {
+            title: this.model.get('title')
+        });
     }
 });
 // // @todo: remove all of the direct DOM manipulation from this.

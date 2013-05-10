@@ -15,7 +15,7 @@
 
     App.addInitializer(function(opts){
         var mixtape = new Mixtape({
-            'id': 1
+            'id': 2
         });
         var mixtapeView = new MixtapeView({
             vent: this.vent,
