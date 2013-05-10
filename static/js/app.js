@@ -8,15 +8,24 @@
     var App = new Backbone.Marionette.Application();
 
     App.addRegions({
-        "mixtapeView": "#mixtape",
-        "contentView": "#content",
-        "controlsView": "#controls"
+        "mixtapeRegion": "#mixtape",
+        "contentRegion": "#content",
+        "controlsRegion": "#controls"
     });
 
     App.addInitializer(function(opts){
+        var mixtape = new Mixtape({
+            'id': 1
+        });
         var mixtapeView = new MixtapeView({
             vent: this.vent,
-            model: new Mixtape()
+            model: mixtape
+        });
+
+        this.mixtapeRegion.show(mixtapeView);
+
+        this.vent.trigger('header:titleUpdate', {
+            'title': 'foo'
         });
         // var contentView = new ContentView({
             // vent: this.vent

@@ -76,6 +76,14 @@
         </div>
     </div>
     <!-- templates -->
+    <script type="text/template" id="mixtape-template">
+        <table class="table table-bordered">
+            <tbody id="mixtape-table"></tbody>
+        </table>
+    </script>
+    <script type="text/template" id="mixtape-song-template">
+        <td id="mixtape-song:<%= id %>"><%= artist %> - <%= title %></td>
+    </script>
     <script type="text/template" id="help-template">
 
         <div class='text-heading'>Alerts</div>
@@ -161,7 +169,7 @@
         <div class='text-body'>'add' icon: <a href='http://thenounproject.com/noun/add/#icon-No8394'>the noun project</a><br/>
         'source' icon: <a href='http://thenounproject.com/noun/antenna/#icon-No10170'>the noun project</a></div>
     </script>
-    <script type="text/template" id="search-setup-template">
+    <!--<script type="text/template" id="search-setup-template">
         <div id="recommendations">
         </div>
         <div id="search-box">
@@ -235,7 +243,7 @@
                 <span class="remove-song fake-link-black">x</span>
             </div>
         </div>
-    </script>
+    </script>-->
     <script src="/static/js/jquery.js"></script>
     <script src="/static/js/jeditable.min.js"></script>
     <script src="/static/js/jquery-ui-1.10.0.custom.min.js"></script>
@@ -251,6 +259,7 @@
     <script src="/static/js/models/mixtape.js"></script>
     <script src="/static/js/collections/songCollection.js"></script>
     <script src="/static/js/views/playerView.js"></script>
+    <script src="/static/js/views/mixtapeSongView.js"></script>
     <script src="/static/js/views/mixtapeView.js"></script>
     <script src="/static/js/views/searchView.js"></script>
     <script src="/static/js/views/helpView.js"></script>

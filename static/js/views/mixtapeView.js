@@ -1,7 +1,59 @@
-var MixtapeView = Backbone.Marionette.ItemView.extend({
+var MixtapeView = Backbone.Marionette.CompositeView.extend({
+    itemView: MixtapeSongView,
+    itemViewContainer: "tbody",
+    containerSelector: "mixtape-table",
+    template: "#mixtape-template",
     initialize: function(){
-        console.log('hi');
-        console.log(this.model);
+        // Fetch the mixtape information from the server
+        this.model.fetch().then(function(){
+            // Define the view's Collection
+            // model.songs is a SongCollection already
+            this.collection = this.model.get('songs');
+            this.render();
+            this.setSortable();
+
+        }.bind(this));
+
+        // Listen for title updates
+        this.options.vent.on('header:titleUpdate', function(data){
+            this.model.set('title', data.title);
+        }.bind(this));
+
+        // Listen for controls updates to keep track of current song
+        this.options.vent.on('controls:play', function(){
+            // do something
+        });
+        this.options.vent.on('controls:pause', function(){
+            // do something
+        });
+        this.options.vent.on('controls:back', function(){
+            // do something
+        });
+        this.options.vent.on('controls:next', function(){
+            // do something
+        });
+    },
+    setSortable: function(){
+        $("#" + this.containerSelector).sortable({
+            update: function(){
+                var children = $("#" + this.containerSelector).children(),
+                    updateSongs = [],
+                    id,
+                    song,
+                    newCollection;
+
+                // Make a new collection based on the sorted list and save the changes.
+                children.each(function(index){
+                    id = $(children[index]).children()[0].id.split(':')[1];
+                    song = this.collection.get(id);
+                    updateSongs.push(song);
+                }.bind(this));
+                newCollection = new SongCollection(updateSongs);
+                this.collection = newCollection;
+                this.model.set('songs', this.collection);
+                this.model.save();
+            }.bind(this)
+        });
     }
 });
 // // @todo: remove all of the direct DOM manipulation from this.
