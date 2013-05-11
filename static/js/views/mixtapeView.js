@@ -9,6 +9,7 @@ var MixtapeView = Backbone.Marionette.CompositeView.extend({
     currentSongId: null,
     paused: false,
     playing: false,
+    hasPlayed: false,
     initialize: function(){
         // Fetch the mixtape information from the server
         this.model.fetch().then(function(){
@@ -47,7 +48,13 @@ var MixtapeView = Backbone.Marionette.CompositeView.extend({
                     collection: new SongCollection(updateSongs)
                 });
                 // Update the current song position
-                this.updateCurrentSong(this.collection.indexOf(this.collection.get(this.currentSongId)));
+                if (this.hasPlayed){
+                    this.updateCurrentSong(this.collection.indexOf(this.collection.get(this.currentSongId)));
+                }
+                else {
+                    this.updateCurrentSong(0);
+                }
+                
             }.bind(this)
         });
     },
@@ -84,6 +91,7 @@ var MixtapeView = Backbone.Marionette.CompositeView.extend({
         this.options.vent.trigger('mixtape:play');
         // this.paused = false;
         this.playing = true;
+        this.hasPlayed = true;
 
         // Update the UI element in the mixtape view
         $(this.playSongSelector).removeClass('icon-pause');
