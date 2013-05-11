@@ -2,8 +2,6 @@
 
     // This must be executed after models/, collections/ and views/ have been loaded.
 
-    // @todo: modularize with require.js and AMD.
-
 
     var App = new Backbone.Marionette.Application();
 
@@ -15,13 +13,7 @@
     });
 
     App.addInitializer(function(opts){
-        var mixtape = new Mixtape({
-            'id': 2
-        });
-        var mixtapeView = new MixtapeView({
-            vent: this.vent,
-            model: mixtape
-        });
+        
         var controlsView = new ControlsView({
             vent: this.vent
         });
@@ -33,10 +25,31 @@
         var browseView = new BrowseView();
         var searchView = new SearchView();
 
-        this.mixtapeRegion.show(mixtapeView);
         this.controlsRegion.show(controlsView);
         this.progressRegion.show(progressView);
 
+        this.vent.on("router:new", function(){
+            var mixtapeView = new MixtapeView({
+                vent: this.vent
+            });
+            this.vent.trigger("app:new");
+            this.mixtapeRegion.show(mixtapeView);
+        }.bind(this));
+
+        this.vent.on("router:load", function(data){
+            var mixtapeView = new MixtapeView({
+                vent: this.vent
+            });
+            this.vent.trigger("app:load", {
+                id: data.id
+            });
+            this.mixtapeRegion.show(mixtapeView);
+        }.bind(this));
+
+        $("#click-new").click(function(e){
+            e.preventDefault();
+            this.vent.trigger('app:new');
+        }.bind(this));
 
         $("#click-browse").click(function(e){
             $(".nav-item").removeClass("active");
@@ -59,6 +72,44 @@
             this.contentRegion.show(helpView);
         }.bind(this));
 
+    });
+
+    App.Routing = function(){
+        var Routing = {};
+
+        Routing.Router = Backbone.Marionette.AppRouter.extend({
+            routes: {
+                "": "createNew",
+                ":id": "load"
+            },
+            createNew: function(){
+                console.log('new');
+                App.vent.trigger("router:new");
+            },
+            load: function(id){
+                console.log(id);
+                App.vent.trigger("router:load", {
+                    id: id
+                });
+            }
+        });
+
+        App.addInitializer(function(){
+            Routing.router = new Routing.Router();
+            App.vent.trigger("router:start");
+            App.vent.on("browse:navigate", function(data){
+                Routing.router.navigate(data.id);
+            });
+        });
+        return Routing;
+    }();
+
+    App.on("initialize:after", function(){
+        if (Backbone.history){
+            Backbone.history.start({
+                pushState: true
+            });
+        }
     });
 
     App.start();

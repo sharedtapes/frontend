@@ -5,6 +5,7 @@ var Mixtape = Backbone.Model.extend({
 		author: 'anonymous',
 		created: new Date(),
 		similarArtists: [],
+		songs: new SongCollection(),
 		locked: false
 	},
 	parse: function(response){
