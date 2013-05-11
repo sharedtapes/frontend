@@ -25,6 +25,8 @@
             vent: this.vent
         });
 
+        this.controlsView = controlsView;
+
         this.mixtapeRegion.show(mixtapeView);
         this.controlsRegion.show(controlsView);
 

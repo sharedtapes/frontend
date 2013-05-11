@@ -1,9 +1,14 @@
 var MixtapeView = Backbone.Marionette.CompositeView.extend({
     itemView: MixtapeSongView,
     itemViewContainer: "tbody",
-    containerSelector: "mixtape-table",
-    itemSelector: "mixtape-song",
+    containerSelector: "#mixtape-table",
+    itemSelector: "#mixtape-song",
     template: "#mixtape-template",
+    playSongSelector: ".play-song",
+    currentSongIndex: 0,
+    currentSongId: null,
+    paused: false,
+    playing: false,
     initialize: function(){
         // Fetch the mixtape information from the server
         this.model.fetch().then(function(){
@@ -15,6 +20,8 @@ var MixtapeView = Backbone.Marionette.CompositeView.extend({
             this.render();
             this.setSortable();
 
+            this.updateCurrentSong(0);
+
         }.bind(this));
 
         // External event binding
@@ -25,19 +32,87 @@ var MixtapeView = Backbone.Marionette.CompositeView.extend({
         }.bind(this));
 
         // Listen for controls updates to keep track of current song
+        // controls:play tells the mixtape that we'd like to play.
+        // if it's possible, emit mixtape:load and mixtape:play,
+        // which will actually initiate the playing.
         this.options.vent.on('controls:play', function(){
-            // do something
-            console.log('play');
-        });
+            var songToPlay = this.collection.get(this.currentSongId);
+            if (songToPlay === undefined){
+                return;
+            }
+            if (!this.playing){
+                this.options.vent.trigger('mixtape:load', {
+                    'url': songToPlay.get('url')
+                });
+            }
+            this.options.vent.trigger('mixtape:play');
+            // this.paused = false;
+            this.playing = true;
+        }.bind(this));
+
+        // Controls wants to pause - we need to keep track of it here,
+        // then echo the event back to Controls to pause the audio.
         this.options.vent.on('controls:pause', function(){
-            // do something
-        });
-        this.options.vent.on('controls:back', function(){
-            // do something
-        });
+            // this.paused = true;
+            this.playing = false;
+            this.options.vent.trigger('mixtape:pause');
+        }.bind(this));
+
+        // Change the song, update the current song, play the song
+        // if we were playing before.
+        this.options.vent.on('controls:prev', function(){
+            // Handle the first song case
+            if (this.currentSongIndex !== 0){
+                this.updateCurrentSong(this.currentSongIndex - 1);
+                var songToPlay = this.collection.get(this.currentSongId);
+                if (songToPlay === undefined){
+                    return;
+                }
+                this.options.vent.trigger('mixtape:load', {
+                    'url': songToPlay.get('url')
+                });
+                if (this.playing){
+                    this.options.vent.trigger('mixtape:play');
+                    this.playing = true;
+                }
+            }
+        }.bind(this));
+
+        // Change the song, update the current song, play the song
+        // if we were playing before.
         this.options.vent.on('controls:next', function(){
-            // do something
-        });
+            // Handle the last song case
+            if (this.currentSongIndex !== (this.collection.length - 1)){
+                this.updateCurrentSong(this.currentSongIndex + 1);
+                var songToPlay = this.collection.get(this.currentSongId);
+                if (songToPlay === undefined){
+                    return;
+                }
+                this.options.vent.trigger('mixtape:load', {
+                    'url': songToPlay.get('url')
+                });
+                if (this.playing){
+                    this.options.vent.trigger('mixtape:play');
+                    this.playing = true;
+                }
+            }
+        }.bind(this));
+
+        // Trigger the playing of the next song, if there is one.
+        this.options.vent.on('controls:finish', function(){
+            if (this.currentSongIndex !== (this.collection.length - 1)){
+                this.updateCurrentSong(this.currentSongIndex + 1);
+                var songToPlay = this.collection.get(this.currentSongId);
+                if (songToPlay === undefined){
+                    return;
+                }
+                this.options.vent.trigger('mixtape:load', {
+                    'url': songToPlay.get('url')
+                });
+                this.options.vent.trigger('mixtape:play');
+                this.paused = false;
+            }
+        }.bind(this));
 
         // Listen for full mixtape updates from other viewers
         this.options.vent.on('websocket:update', function(modelUpdate){
@@ -47,9 +122,9 @@ var MixtapeView = Backbone.Marionette.CompositeView.extend({
         });
     },
     setSortable: function(){
-        $("#" + this.containerSelector).sortable({
+        $(this.containerSelector).sortable({
             update: function(){
-                var children = $("#" + this.containerSelector).children(),
+                var children = $(this.containerSelector).children(),
                     updateSongs = [],
                     id,
                     song,
@@ -57,13 +132,15 @@ var MixtapeView = Backbone.Marionette.CompositeView.extend({
 
                 // Make a new collection based on the sorted list and save the changes.
                 children.each(function(index){
-                    id = $(children[index]).children()[0].id.split(':')[1];
+                    id = $(children[index]).children()[0].id.split('_')[1];
                     song = this.collection.get(id);
                     updateSongs.push(song);
                 }.bind(this));
                 this.save({
                     collection: new SongCollection(updateSongs)
                 });
+                // Update the current song position
+                this.updateCurrentSong(this.collection.indexOf(this.collection.get(this.currentSongId)));
             }.bind(this)
         });
     },
@@ -82,6 +159,12 @@ var MixtapeView = Backbone.Marionette.CompositeView.extend({
         this.options.vent.trigger('mixtape:titleUpdate', {
             title: this.model.get('title')
         });
+    },
+    updateCurrentSong: function(index){
+        this.currentSongIndex = index;
+        this.currentSongId = this.collection.at(index).get('id');
+        $(".info").removeClass('info');
+        $($(this.itemSelector + "_" + this.currentSongId).parent()).addClass('info');
     }
 });
 // // @todo: remove all of the direct DOM manipulation from this.
