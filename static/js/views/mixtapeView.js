@@ -10,10 +10,14 @@ var MixtapeView = Backbone.Marionette.CompositeView.extend({
             // Define the view's Collection
             // model.songs is a SongCollection already
             this.collection = this.model.get('songs');
+
+            // @todo: move these elsewhere?
             this.render();
             this.setSortable();
 
         }.bind(this));
+
+        // External event binding
 
         // Listen for title updates
         this.options.vent.on('header:titleUpdate', function(data){
@@ -23,6 +27,7 @@ var MixtapeView = Backbone.Marionette.CompositeView.extend({
         // Listen for controls updates to keep track of current song
         this.options.vent.on('controls:play', function(){
             // do something
+            console.log('play');
         });
         this.options.vent.on('controls:pause', function(){
             // do something

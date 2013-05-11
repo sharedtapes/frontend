@@ -21,18 +21,13 @@
             vent: this.vent,
             model: mixtape
         });
+        var controlsView = new ControlsView({
+            vent: this.vent
+        });
 
         this.mixtapeRegion.show(mixtapeView);
+        this.controlsRegion.show(controlsView);
 
-        this.vent.trigger('header:titleUpdate', {
-            'title': 'foo'
-        });
-        // var contentView = new ContentView({
-            // vent: this.vent
-        // });
-        // var controlsView = new ControlsView({
-            // vent: this.vent
-        // });
     });
 
     App.start();
