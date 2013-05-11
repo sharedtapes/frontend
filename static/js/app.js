@@ -35,6 +35,28 @@
         this.controlsRegion.show(controlsView);
         this.progressRegion.show(progressView);
 
+
+        $("#click-browse").click(function(e){
+            $(".nav-item").removeClass("active");
+            $("#click-browse").parent().addClass("active");
+            e.preventDefault();
+            // this.contentRegion.show(browseView);
+        }.bind(this));
+
+        $("#click-search").click(function(e){
+            $(".nav-item").removeClass("active");
+            $("#click-search").parent().addClass("active");
+            e.preventDefault();
+            // this.contentRegion.show(searchView);
+        }.bind(this));
+
+        $("#click-help").click(function(e){
+            $(".nav-item").removeClass("active");
+            $("#click-help").parent().addClass("active");
+            e.preventDefault();
+            // this.contentRegion.show(helpView);
+        }.bind(this));
+
     });
 
     App.start();
