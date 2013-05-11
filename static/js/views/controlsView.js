@@ -27,6 +27,11 @@ var ControlsView = Backbone.Marionette.ItemView.extend({
 		this.options.vent.on("mixtape:pause", function(){
 			this.pause();
 		}.bind(this));
+
+		// this.options.vent.on("progress:seek", function(data){
+		// 	console.log('yep');
+		// 	this.sound.setPosition(data.percent*this.sound.duration);
+		// }.bind(this));
 	},
 	prev: function(e){
 		this.options.vent.trigger("controls:prev");
@@ -54,10 +59,18 @@ var ControlsView = Backbone.Marionette.ItemView.extend({
 		// Play the song
 		this.sound.play();
 
+		// Update the UI
+		clearInterval(this.updater);
+		this.updater = setInterval(function(){
+			this.options.vent.trigger("controls:timeUpdate", {
+				'percent': (this.sound.position/this.sound.duration)*100
+			});
+		}.bind(this), 500);
+
 		// Set up the ending case
 		this.sound.options.onfinish = function(){
-			this.options.vent.trigger("controls:finish");	
-		}
+			this.options.vent.trigger("controls:finish");
+		};
 
 		// Change the Controls UI
 		$(this.playpauseSelector).removeClass('icon-play');
@@ -71,6 +84,7 @@ var ControlsView = Backbone.Marionette.ItemView.extend({
 		}
 
 		this.sound.pause();
+		clearInterval(this.updater);
 
 		$(this.playpauseSelector).removeClass('icon-pause');
 		$(this.playpauseSelector).addClass('icon-play');

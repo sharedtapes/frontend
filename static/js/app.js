@@ -10,7 +10,8 @@
     App.addRegions({
         "mixtapeRegion": "#mixtape",
         "contentRegion": "#content",
-        "controlsRegion": "#controls"
+        "controlsRegion": "#controls",
+        "progressRegion": "#progress"
     });
 
     App.addInitializer(function(opts){
@@ -24,11 +25,15 @@
         var controlsView = new ControlsView({
             vent: this.vent
         });
+        var progressView = new ProgressView({
+            vent: this.vent,
+            model: new ProgressBar()
+        });
 
-        this.controlsView = controlsView;
 
         this.mixtapeRegion.show(mixtapeView);
         this.controlsRegion.show(controlsView);
+        this.progressRegion.show(progressView);
 
     });
 
