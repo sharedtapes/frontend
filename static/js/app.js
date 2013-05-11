@@ -29,7 +29,9 @@
             vent: this.vent,
             model: new ProgressBar()
         });
-
+        var helpView = new HelpView();
+        var browseView = new BrowseView();
+        var searchView = new SearchView();
 
         this.mixtapeRegion.show(mixtapeView);
         this.controlsRegion.show(controlsView);
@@ -40,21 +42,21 @@
             $(".nav-item").removeClass("active");
             $("#click-browse").parent().addClass("active");
             e.preventDefault();
-            // this.contentRegion.show(browseView);
+            this.contentRegion.show(browseView);
         }.bind(this));
 
         $("#click-search").click(function(e){
             $(".nav-item").removeClass("active");
             $("#click-search").parent().addClass("active");
             e.preventDefault();
-            // this.contentRegion.show(searchView);
+            this.contentRegion.show(searchView);
         }.bind(this));
 
         $("#click-help").click(function(e){
             $(".nav-item").removeClass("active");
             $("#click-help").parent().addClass("active");
             e.preventDefault();
-            // this.contentRegion.show(helpView);
+            this.contentRegion.show(helpView);
         }.bind(this));
 
     });

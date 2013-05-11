@@ -1,4 +1,6 @@
-
+var SearchView = Backbone.Marionette.CompositeView.extend({
+    template: "#search-template"
+});
 // // @todo: remove all of the direct DOM manipulation from this.
 // // the view should publish events, and an abstraction layer should do
 // // the DOM manipulation based on the events.
